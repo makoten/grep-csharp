@@ -17,14 +17,26 @@ static bool MatchPattern(string inputLine, string pattern)
         return inputLine.Any(char.IsLetterOrDigit);
     }
 
+    if (HasNegativeCharacterGroups(pattern))
+    {
+        // TODO: That's a little too "happy path-ish" for me tbh
+        var start = pattern.IndexOf('^') + 1;
+        var end = pattern.IndexOf(']');
+        var lookup = pattern[start..end];
+        return !inputLine.Any(x => lookup.Contains(x, StringComparison.InvariantCultureIgnoreCase));
+    }
+    
     // I don't do return Has... because the alternative is an exception, not false
     if (HasPositiveCharacterGroups(pattern))
     {
+        // TODO: That's a little too "happy path-ish" for me tbh
         var start = pattern.IndexOf('[') + 1;
         var end = pattern.IndexOf(']');
         var lookup = pattern[start..end];
         return inputLine.Any(x => lookup.Contains(x, StringComparison.InvariantCultureIgnoreCase));
     }
+
+    
     
     throw new ArgumentException($"Unhandled pattern: {pattern}");
 }
@@ -62,6 +74,20 @@ static bool HasPositiveCharacterGroups(string input)
 
         if (fullBrackets)
             return true;
+    }
+
+    return false;
+}
+
+static bool HasNegativeCharacterGroups(string input)
+{
+    if (HasPositiveCharacterGroups(input))
+    {
+        for (var i = 0; i < input.Length-1; i++)
+        {
+            if (input[i] == '[' && input[i + 1] == '^')
+                return true;
+        }
     }
 
     return false;
