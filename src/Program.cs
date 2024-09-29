@@ -20,7 +20,10 @@ static bool MatchPattern(string inputLine, string pattern)
     // I don't do return Has... because the alternative is an exception, not false
     if (HasPositiveCharacterGroups(pattern))
     {
-        return true;
+        var start = pattern.IndexOf('[') + 1;
+        var end = pattern.IndexOf(']');
+        var lookup = pattern[start..end];
+        return inputLine.Any(x => lookup.Contains(x, StringComparison.InvariantCultureIgnoreCase));
     }
     
     throw new ArgumentException($"Unhandled pattern: {pattern}");
@@ -42,21 +45,22 @@ Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
 
 static bool HasPositiveCharacterGroups(string input)
 {
-    var firstBracket = false;
-    var secondBracket = false;
+    var openingBracket = false;
+    var fullBrackets = false;
     foreach (var c in input)
     {
         switch (c)
         {
             case '[':
-                firstBracket = true;
+                openingBracket = true;
                 break;
             case ']':
-                secondBracket = true;
+                if (openingBracket)
+                    fullBrackets = true;
                 break;
         }
 
-        if (firstBracket && secondBracket)
+        if (fullBrackets)
             return true;
     }
 
