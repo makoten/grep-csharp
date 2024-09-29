@@ -1,16 +1,18 @@
-using System;
-using System.IO;
 
 static bool MatchPattern(string inputLine, string pattern)
 {
+    
     if (pattern.Length == 1)
     {
         return inputLine.Contains(pattern);
     }
-    else
+    
+    if (pattern.Contains(@"\d"))
     {
-        throw new ArgumentException($"Unhandled pattern: {pattern}");
+        return inputLine.Any(char.IsNumber);
     }
+    
+    throw new ArgumentException($"Unhandled pattern: {pattern}");
 }
 
 if (args[0] != "-E")
@@ -26,11 +28,3 @@ string inputLine = Console.In.ReadToEnd();
 Console.WriteLine("Logs from your program will appear here!");
 
 Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
-// if (MatchPattern(inputLine, pattern))
-// {
-//     Environment.Exit(0);
-// }
-// else
-// {
-//     Environment.Exit(1);
-// }
