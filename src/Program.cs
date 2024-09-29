@@ -16,6 +16,12 @@ static bool MatchPattern(string inputLine, string pattern)
     {
         return inputLine.Any(char.IsLetterOrDigit);
     }
+
+    // I don't do return Has... because the alternative is an exception, not false
+    if (HasPositiveCharacterGroups(pattern))
+    {
+        return true;
+    }
     
     throw new ArgumentException($"Unhandled pattern: {pattern}");
 }
@@ -33,3 +39,26 @@ string inputLine = Console.In.ReadToEnd();
 Console.WriteLine("Logs from your program will appear here!");
 
 Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
+
+static bool HasPositiveCharacterGroups(string input)
+{
+    var firstBracket = false;
+    var secondBracket = false;
+    foreach (var c in input)
+    {
+        switch (c)
+        {
+            case '[':
+                firstBracket = true;
+                break;
+            case ']':
+                secondBracket = true;
+                break;
+        }
+
+        if (firstBracket && secondBracket)
+            return true;
+    }
+
+    return false;
+}
