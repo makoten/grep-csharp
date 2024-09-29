@@ -25,8 +25,7 @@ string inputLine = Console.In.ReadToEnd();
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.WriteLine("Logs from your program will appear here!");
 
-// Uncomment this block to pass the first stage
-// 
+Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
 // if (MatchPattern(inputLine, pattern))
 // {
 //     Environment.Exit(0);
