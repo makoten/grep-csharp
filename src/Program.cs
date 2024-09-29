@@ -11,6 +11,11 @@ static bool MatchPattern(string inputLine, string pattern)
     {
         return inputLine.Any(char.IsNumber);
     }
+
+    if (pattern.Contains(@"\w"))
+    {
+        return inputLine.Any(char.IsLetterOrDigit);
+    }
     
     throw new ArgumentException($"Unhandled pattern: {pattern}");
 }
