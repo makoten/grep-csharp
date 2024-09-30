@@ -1,51 +1,48 @@
-static bool MatchPattern(string inputLine, string pattern)
+static bool MatchPattern(string input, string pattern)
 {
     if (pattern.Length == 1)
-        return inputLine.Contains(pattern);
-
-    var patternIdx = 0;
-    foreach (var currentChar in inputLine)
+        return input.Contains(pattern);
+    var inputIdx = 0;
+    var matchFound = false;
+    while (inputIdx < input.Length)
     {
-        // if it's the end of the pattern but there are still characters in the input string
-
-        if (pattern[patternIdx] == '\\')
-        {
-            patternIdx++;
-            if ((pattern[patternIdx] == 'w' && !(char.IsLetterOrDigit(currentChar) || currentChar == '_'))
-                || (pattern[patternIdx] == 'd' && !char.IsNumber(currentChar)))
-                return false;
-        }
-        else if (currentChar != pattern[patternIdx])
-        {
-            return false;
-        }
-
-        patternIdx++;
-        if (patternIdx == pattern.Length)
+        matchFound = Matcher(input, pattern, inputIdx);
+        if (matchFound)
             return true;
+        
+        inputIdx++;
     }
-
-    return true;
     
-   
-    //  Keeping this old code around won't hurt Clueless
-    // if (HasNegativeCharacterGroups(pattern))
-    // {
-    //     var start = pattern.IndexOf('^') + 1;
-    //     var end = pattern.IndexOf(']');
-    //     var lookup = pattern[start..end];
-    //     return !inputLine.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
-    // }
-    //
-    // if (HasPositiveCharacterGroups(pattern))
-    // {
-    //     var start = pattern.IndexOf('[') + 1;
-    //     var end = pattern.IndexOf(']');
-    //     var lookup = pattern[start..end];
-    //     return inputLine.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
-    // }
+    return false;
+    
+    bool Matcher(string input, string pattern, int i)
+    {
+        var patternIdx = 0;
+        while (patternIdx < pattern.Length)
+        {
+            if (i == input.Length)
+                return false;
+            if (pattern[patternIdx] == '\\')
+            {
+                patternIdx++;
+                if (pattern[patternIdx] == 'w' && !(char.IsLetterOrDigit(input[i]) || input[i] == '_') || 
+                    pattern[patternIdx] == 'd' && !char.IsNumber(input[i]))
+                    return false;
+            }
+            else
+            {
+                var patternChar = pattern[patternIdx];
+                var inputChar = input[i];
+                if (patternChar != inputChar)
+                    return false;
+            }
 
-    // throw new ArgumentException($"Unhandled pattern: {pattern}");
+            patternIdx++;
+            i++;
+        }
+
+        return true;
+    }
 }
 
 if (args[0] != "-E")
@@ -54,8 +51,6 @@ if (args[0] != "-E")
     Environment.Exit(2);
 }
 
-// var pattern = @"\d apple";
-// var inputLine = "sally has 1 orange";
 
 string pattern = args[1];
 string inputLine = Console.In.ReadToEnd();
@@ -63,7 +58,6 @@ string inputLine = Console.In.ReadToEnd();
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.WriteLine("Logs from your program will appear here!");
 
-// Console.WriteLine(MatchPattern(inputLine, pattern) ? "match" : "no match!");
 Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
 
 // static bool HasPositiveCharacterGroups(string input)
