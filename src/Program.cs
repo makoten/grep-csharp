@@ -9,13 +9,19 @@ static bool MatchPattern(string input, string pattern)
     if (pattern[0] == '[')
     {
         int start;
+        int end;
+        string lookup;
         if (HasNegativeCharacterGroups(pattern))
+        {
             start = pattern.IndexOf('^') + 1;
-        else
-            start = pattern.IndexOf('[') + 1;
+            end = pattern.IndexOf(']');
+            lookup = pattern[start..end];
+            return !input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
+        }
 
-        var end = pattern.IndexOf(']');
-        var lookup = pattern[start..end];
+        start = pattern.IndexOf('[') + 1;
+        end = pattern.IndexOf(']');
+        lookup = pattern[start..end];
         return input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
     }
 
@@ -64,7 +70,6 @@ if (args[0] != "-E")
     Console.WriteLine("Expected first argument to be '-E'");
     Environment.Exit(2);
 }
-
 
 var pattern = args[1];
 var inputLine = Console.In.ReadToEnd();
