@@ -6,8 +6,10 @@ if (args[0] != "-E")
     Environment.Exit(2);
 }
 
-string pattern = args[1];
-string inputLine = Console.In.ReadToEnd();
+string pattern = "ca+ts";
+string inputLine = "caats";
+// string pattern = args[1];
+// string inputLine = Console.In.ReadToEnd();
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.WriteLine("Logs from your program will appear here!");
@@ -78,10 +80,22 @@ class PatternMatcher(string pattern)
                     pattern[patternIdx] == 'd' && !char.IsNumber(input[i]))
                     return false;
             }
+            else if (pattern[patternIdx] == '+')
+            {
+                var repeatingLetter = pattern[patternIdx - 1];
+                while (input[i] == repeatingLetter && i < input.Length)
+                {
+                    i++;
+                }
+                
+                // correcting offset input index due to repeated character matching
+                i--;
+            }
             else if (pattern[patternIdx] != input[i])
             {
                 return false;
             }
+            
     
             patternIdx++;
             i++;
