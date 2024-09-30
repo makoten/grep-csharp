@@ -4,6 +4,22 @@ static bool MatchPattern(string input, string pattern)
         return input.Contains(pattern);
     var inputIdx = 0;
     var matchFound = false;
+    if (HasNegativeCharacterGroups(pattern))
+    {
+        var start = pattern.IndexOf('^') + 1;
+        var end = pattern.IndexOf(']');
+        var lookup = pattern[start..end];
+        return !input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
+    }
+
+    if (HasPositiveCharacterGroups(pattern))
+    {
+        var start = pattern.IndexOf('[') + 1;
+        var end = pattern.IndexOf(']');
+        var lookup = pattern[start..end];
+        return input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
+    }
+        
     while (inputIdx < input.Length)
     {
         matchFound = Matcher(input, pattern, inputIdx);
@@ -20,8 +36,10 @@ static bool MatchPattern(string input, string pattern)
         var patternIdx = 0;
         while (patternIdx < pattern.Length)
         {
+            // ensure that we're not at the end of the input
             if (i == input.Length)
                 return false;
+            
             if (pattern[patternIdx] == '\\')
             {
                 patternIdx++;
@@ -29,12 +47,9 @@ static bool MatchPattern(string input, string pattern)
                     pattern[patternIdx] == 'd' && !char.IsNumber(input[i]))
                     return false;
             }
-            else
+            else if (pattern[patternIdx] != input[i])
             {
-                var patternChar = pattern[patternIdx];
-                var inputChar = input[i];
-                if (patternChar != inputChar)
-                    return false;
+                return false;
             }
 
             patternIdx++;
@@ -60,40 +75,40 @@ Console.WriteLine("Logs from your program will appear here!");
 
 Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
 
-// static bool HasPositiveCharacterGroups(string input)
-// {
-//     var openingBracket = false;
-//     var fullBrackets = false;
-//     foreach (var c in input)
-//     {
-//         switch (c)
-//         {
-//             case '[':
-//                 openingBracket = true;
-//                 break;
-//             case ']':
-//                 if (openingBracket)
-//                     fullBrackets = true;
-//                 break;
-//         }
-//
-//         if (fullBrackets)
-//             return true;
-//     }
-//
-//     return false;
-// }
-//
-// static bool HasNegativeCharacterGroups(string input)
-// {
-//     if (HasPositiveCharacterGroups(input))
-//     {
-//         for (var i = 0; i < input.Length-1; i++)
-//         {
-//             if (input[i] == '[' && input[i + 1] == '^')
-//                 return true;
-//         }
-//     }
-//
-//     return false;
-// }
+static bool HasPositiveCharacterGroups(string input)
+{
+    var openingBracket = false;
+    var fullBrackets = false;
+    foreach (var c in input)
+    {
+        switch (c)
+        {
+            case '[':
+                openingBracket = true;
+                break;
+            case ']':
+                if (openingBracket)
+                    fullBrackets = true;
+                break;
+        }
+
+        if (fullBrackets)
+            return true;
+    }
+
+    return false;
+}
+
+static bool HasNegativeCharacterGroups(string input)
+{
+    if (HasPositiveCharacterGroups(input))
+    {
+        for (var i = 0; i < input.Length-1; i++)
+        {
+            if (input[i] == '[' && input[i + 1] == '^')
+                return true;
+        }
+    }
+
+    return false;
+}
