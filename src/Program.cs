@@ -70,6 +70,7 @@ if (args[0] != "-E")
 string pattern = args[1];
 string inputLine = Console.In.ReadToEnd();
 
+
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.WriteLine("Logs from your program will appear here!");
 
