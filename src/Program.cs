@@ -6,10 +6,10 @@ if (args[0] != "-E")
     Environment.Exit(2);
 }
 
-string pattern = "ca+ts";
-string inputLine = "caats";
-// string pattern = args[1];
-// string inputLine = Console.In.ReadToEnd();
+// string pattern = "ca+t";
+// string inputLine = "act";
+string pattern = args[1];
+string inputLine = Console.In.ReadToEnd();
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.WriteLine("Logs from your program will appear here!");
