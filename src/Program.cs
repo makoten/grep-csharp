@@ -19,21 +19,22 @@ static bool MatchPattern(string input, string pattern)
         var lookup = pattern[start..end];
         return input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
     }
+
     // edge case for strict start of string
     if (pattern[0] == '^')
         return Matcher(input, pattern[1..], 0);
-    
+
     while (inputIdx < input.Length)
     {
         matchFound = Matcher(input, pattern, inputIdx);
         if (matchFound)
             return true;
-        
+
         inputIdx++;
     }
-    
+
     return false;
-    
+
     bool Matcher(string input, string pattern, int i)
     {
         var patternIdx = 0;
@@ -41,12 +42,13 @@ static bool MatchPattern(string input, string pattern)
         {
             // ensure that we're not at the end of the input
             if (i == input.Length)
-                return false;
-            
+                // handle the end of line pattern match
+                return pattern[patternIdx] == '$';
+
             if (pattern[patternIdx] == '\\')
             {
                 patternIdx++;
-                if (pattern[patternIdx] == 'w' && !(char.IsLetterOrDigit(input[i]) || input[i] == '_') || 
+                if (pattern[patternIdx] == 'w' && !(char.IsLetterOrDigit(input[i]) || input[i] == '_') ||
                     pattern[patternIdx] == 'd' && !char.IsNumber(input[i]))
                     return false;
             }
@@ -105,7 +107,7 @@ static bool HasNegativeCharacterGroups(string input)
 {
     if (HasPositiveCharacterGroups(input))
     {
-        for (var i = 0; i < input.Length-1; i++)
+        for (var i = 0; i < input.Length - 1; i++)
         {
             if (input[i] == '[' && input[i + 1] == '^')
                 return true;
