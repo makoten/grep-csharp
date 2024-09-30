@@ -3,25 +3,19 @@ static bool MatchPattern(string input, string pattern)
     if (pattern.Length == 1)
         return input.Contains(pattern);
     var inputIdx = 0;
-    bool matchFound;
-
-    // Check if the pattern is a group pattern
-    if (pattern[0] == '[')
+    bool matchFound = false;
+    if (HasNegativeCharacterGroups(pattern))
     {
-        int start;
-        int end;
-        string lookup;
-        if (HasNegativeCharacterGroups(pattern))
-        {
-            start = pattern.IndexOf('^') + 1;
-            end = pattern.IndexOf(']');
-            lookup = pattern[start..end];
-            return !input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
-        }
-
-        start = pattern.IndexOf('[') + 1;
-        end = pattern.IndexOf(']');
-        lookup = pattern[start..end];
+        var start = pattern.IndexOf('^') + 1;
+        var end = pattern.IndexOf(']');
+        var lookup = pattern[start..end];
+        return !input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
+    }
+    if (HasPositiveCharacterGroups(pattern))
+    {
+        var start = pattern.IndexOf('[') + 1;
+        var end = pattern.IndexOf(']');
+        var lookup = pattern[start..end];
         return input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
     }
 
