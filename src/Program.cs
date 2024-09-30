@@ -54,8 +54,8 @@ if (args[0] != "-E")
     Environment.Exit(2);
 }
 
-// var pattern = @"\d \w\w\ws";
-// var inputLine = "1 dog";
+// var pattern = @"\d apple";
+// var inputLine = "sally has 1 orange";
 
 string pattern = args[1];
 string inputLine = Console.In.ReadToEnd();
@@ -63,8 +63,8 @@ string inputLine = Console.In.ReadToEnd();
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.WriteLine("Logs from your program will appear here!");
 
-Console.WriteLine(MatchPattern(inputLine, pattern) ? "match" : "no match!");
-// Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
+// Console.WriteLine(MatchPattern(inputLine, pattern) ? "match" : "no match!");
+Environment.Exit(MatchPattern(inputLine, pattern) ? 0 : 1);
 
 // static bool HasPositiveCharacterGroups(string input)
 // {
