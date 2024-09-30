@@ -21,7 +21,8 @@ static bool MatchPattern(string input, string pattern)
     }
     // edge case for strict start of string
     if (pattern[0] == '^')
-        return Matcher(input, pattern, 1);
+        return Matcher(input, pattern[1..], 0);
+    
     while (inputIdx < input.Length)
     {
         matchFound = Matcher(input, pattern, inputIdx);
@@ -67,7 +68,6 @@ if (args[0] != "-E")
     Console.WriteLine("Expected first argument to be '-E'");
     Environment.Exit(2);
 }
-
 
 string pattern = args[1];
 string inputLine = Console.In.ReadToEnd();
