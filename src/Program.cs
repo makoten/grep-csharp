@@ -3,7 +3,7 @@ static bool MatchPattern(string input, string pattern)
     if (pattern.Length == 1)
         return input.Contains(pattern);
     var inputIdx = 0;
-    var matchFound = false;
+    bool matchFound = false;
     if (HasNegativeCharacterGroups(pattern))
     {
         var start = pattern.IndexOf('^') + 1;
@@ -11,7 +11,6 @@ static bool MatchPattern(string input, string pattern)
         var lookup = pattern[start..end];
         return !input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
     }
-
     if (HasPositiveCharacterGroups(pattern))
     {
         var start = pattern.IndexOf('[') + 1;
@@ -19,18 +18,18 @@ static bool MatchPattern(string input, string pattern)
         var lookup = pattern[start..end];
         return input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
     }
-        
+
     while (inputIdx < input.Length)
     {
         matchFound = Matcher(input, pattern, inputIdx);
         if (matchFound)
             return true;
-        
+
         inputIdx++;
     }
-    
+
     return false;
-    
+
     bool Matcher(string input, string pattern, int i)
     {
         var patternIdx = 0;
@@ -39,12 +38,12 @@ static bool MatchPattern(string input, string pattern)
             // ensure that we're not at the end of the input
             if (i == input.Length)
                 return false;
-            
+
             if (pattern[patternIdx] == '\\')
             {
                 patternIdx++;
-                if (pattern[patternIdx] == 'w' && !(char.IsLetterOrDigit(input[i]) || input[i] == '_') || 
-                    pattern[patternIdx] == 'd' && !char.IsNumber(input[i]))
+                if ((pattern[patternIdx] == 'w' && !(char.IsLetterOrDigit(input[i]) || input[i] == '_')) ||
+                    (pattern[patternIdx] == 'd' && !char.IsNumber(input[i])))
                     return false;
             }
             else if (pattern[patternIdx] != input[i])
@@ -66,9 +65,8 @@ if (args[0] != "-E")
     Environment.Exit(2);
 }
 
-
-string pattern = args[1];
-string inputLine = Console.In.ReadToEnd();
+var pattern = args[1];
+var inputLine = Console.In.ReadToEnd();
 
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -103,13 +101,9 @@ static bool HasPositiveCharacterGroups(string input)
 static bool HasNegativeCharacterGroups(string input)
 {
     if (HasPositiveCharacterGroups(input))
-    {
-        for (var i = 0; i < input.Length-1; i++)
-        {
+        for (var i = 0; i < input.Length - 1; i++)
             if (input[i] == '[' && input[i + 1] == '^')
                 return true;
-        }
-    }
 
     return false;
 }
