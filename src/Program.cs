@@ -27,8 +27,7 @@ class PatternMatcher(string pattern)
     {
         if (pattern.Length == 1)
             return input.Contains(pattern);
-        var inputIdx = 0;
-        var matchFound = false;
+
         if (HasNegativeCharacterGroups(pattern))
         {
             var start = pattern.IndexOf('^') + 1;
@@ -44,6 +43,10 @@ class PatternMatcher(string pattern)
             var lookup = pattern[start..end];
             return input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
         }
+        var inputIdx = 0;
+        var matchFound = false;
+        if (pattern[0] == '^')
+            return Matcher(input, inputIdx);
     
         while (inputIdx < input.Length)
         {
