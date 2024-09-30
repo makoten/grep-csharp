@@ -19,7 +19,9 @@ static bool MatchPattern(string input, string pattern)
         var lookup = pattern[start..end];
         return input.Any(x => lookup.Contains(x, StringComparison.InvariantCulture));
     }
-        
+    // edge case for strict start of string
+    if (pattern[0] == '^')
+        return Matcher(input, pattern, 1);
     while (inputIdx < input.Length)
     {
         matchFound = Matcher(input, pattern, inputIdx);
